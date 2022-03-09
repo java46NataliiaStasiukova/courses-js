@@ -2,6 +2,7 @@ import courseData from './config/courseData.json'
 import College from './services/college';
 import Courses from './services/courses';
 import FormHandler from './ui/form_handler';
+import TableHandler from './ui/table_handler';
 import { getRandonCourse } from './utils/randomCourse';
 const N_COURSES = 5;
 function createCourses(){
@@ -11,35 +12,34 @@ function createCourses(){
     }
     return courses;
 }
-//TODO
-//rendering inside <ul> (Homework-22)
-/*
-function render(){
-    let listItem = document.getElementById("courses");
-    let coursesList = createCourses();
-    listItem.innerHTML = coursesList.map(i => `
-    <li>${JSON.stringify(i)}</li>
-    `).join("");
-}
-render();
-*/
-//************************* Classwork-23
-function getCourseItem(courses){
-    return courses.map(c => `<li>${JSON.stringify(c)}</li>`).join('');
-}
-const ulElem = document.getElementById("courses");
 const courses = createCourses();
-ulElem.innerHTML = `${getCourseItem(courses)}`;
-const dataProvider = new Courses(courses);
+const dataProvider = new Courses(courseData.minId, courseData.maxId, courses);
 const dataProcessor = new College(dataProvider, courseData);
+
+const tableHandler = new TableHandler([
+    {key: 'id', displayName: 'ID'},
+    {key: 'name', displayName: 'Course Name'},
+    {key: 'lecturer', displayName: 'Lecturer Name'},
+    {key: 'cost', displayName: 'Cost (ILS)'},
+    {key: 'hours', displayName: 'Course Duration (h)'}
+], "courses-table");
+
 const formHandler = new FormHandler("courses-form", "alert");
 formHandler.addHandler(course => {
     const message = dataProcessor.addCourse(course);
-    if (typeof(message)!=='string'){
-    //course.id=100000;
-    ulElem.innerHTML += `<li>${JSON.stringify(course)}</li>`;
+    if (typeof(message) !== 'string'){
     return '';
     }
     return message;
-    
 })
+formHandler.fillOptions("course-name-options", courseData.courses);
+formHandler.fillOptions("course-lecturer-options", courseData.lectors);
+
+window.showForm = () => {
+    formHandler.show();
+    tableHandler.hideTable();
+}
+window.showCourses = () => {
+    tableHandler.showTable(dataProcessor.getAllCourses());
+    formHandler.hideTable;
+}

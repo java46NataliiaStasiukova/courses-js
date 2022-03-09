@@ -50,4 +50,7 @@ export default class College{
         
         return message;
     }
+    getAllCourses(){
+        return this.#courses.get();
+    }
 }

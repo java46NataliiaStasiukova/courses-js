@@ -33,4 +33,7 @@ export default class Courses{
         
         return !!this.#courses.find(c => c.id === id);
     }
+    get(){
+        return this.#courses;
+    }
 }
