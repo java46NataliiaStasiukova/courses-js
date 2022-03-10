@@ -4,17 +4,17 @@ import { getRandomNumber } from "../utils/random";
 
 //data are the regular JS array (fake)
 export default class Courses{
-    #courses;
+    #coursesList;
     #minId;
     #maxId;
     constructor(minId, maxId, courses){
-        this.#courses = courses ?? [];
+        this.#coursesList = courses ?? [];
         this.#minId = minId ?? 1;
         this.#maxId = maxId ?? 10000000;
     }
     add(course){
         course.id = this.#getId();
-        this.#courses.push(course);
+        this.#coursesList.push(course);
         return course;
     }
     #getId(){
@@ -28,12 +28,12 @@ export default class Courses{
     exists(id){
         //TODO
         //checks if a course with the given id exists
-        //return this.#courses.map(c => c == this.id ? true : false)
+        //return this.#coursesList.map(c => c == this.id ? true : false)
         //return false;
         
-        return !!this.#courses.find(c => c.id === id);
+        return !!this.#coursesList.find(c => c.id === id);
     }
     get(){
-        return this.#courses;
+        return this.#coursesList;
     }
 }
