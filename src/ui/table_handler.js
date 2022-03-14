@@ -1,10 +1,14 @@
 export default class TableHandler{
     #tableElem;
     #columnsDefinition;
-    constructor(columnsDefinition, idTable){
+    #sortFnName;
+    #removeFnName;
+    constructor(columnsDefinition, idTable, sortFnName, removeFnName){
         //example of columnsDefinition: 
         //const columns = [{'key': 'name', 'displayName': 'Course Name'},
         // {'key': 'lecturer', 'displayName': 'Lecturer Name'}...]
+        this.#sortFnName = sortFnName ?? '';
+        this.#removeFnName = removeFnName ?? '';
         this.#columnsDefinition = columnsDefinition;
         this.#tableElem = document.getElementById(idTable);
         if(!this.#tableElem){
@@ -21,12 +25,23 @@ export default class TableHandler{
         return `<thead><tr>${this.#getColumns()}</tr></thead>`;
     }
     #getColumns(){
-        return this.#columnsDefinition.map(c => `<th>${c.displayName}</th>`).join('');
+        const columns =  this.#columnsDefinition.map(c => `<th onclick="${this.#getSortFn(c)}">${c.displayName}</th>`);
+        if(this.#removeFnName){
+            columns.push("<th></th>");
+        }
+        return columns.join('');
+    }
+    #getSortFn(columnDefinition){
+        return this.#sortFnName ? `${this.#sortFnName}('${columnDefinition.key}')` : '';
     }
     #getBody(objects){
         return objects.map(o => `<tr>${this.#getRecord(o)}</tr>`).join('');
     }
     #getRecord(object){
-        return this.#columnsDefinition.map(c => `<td>${object[c.key]}</td>`).join('');
+        const record =  this.#columnsDefinition.map(c => `<td>${object[c.key]}</td>`);
+        if(this.#removeFnName){
+            record.push(`<td><i style="cursor:pointer" class="bi bi-trash-fill"onclick="${this.#removeFnName}('${object.id}')"></i></td>`);
+        }
+        return record.join('');
     }
 }

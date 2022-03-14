@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 //Data processor
 export default class College{
     #courseData;
@@ -26,11 +28,6 @@ export default class College{
         //TODO 
         //validate course
         let message;
-        //const message = document.getElementById("test");
-        //message.innerHTML = `<div> ${this.#courseData["minCost"]} </div>`
-        //message.innerHTML = `<div> ${course["cost"]} </div>` 
-        //message.innerHTML = `<div> ${course["openingDate"]} </div>` 
-
         if(!(this.#courseData["courses"]).includes(course["name"])){
             message += `Course does not exist <br>`;
         }
@@ -44,13 +41,40 @@ export default class College{
             message += `Cost should be from 6000 to 30000 <br>`;
         }
         //if(course["openingDate"] < new Date(this.#courseData["minYear"], 1, 1) || course["openingDate"] > new Date(this.#courseData["maxYear"], 1, 1)){
-            if(course["openingDate.getFullYear()"] < this.#courseData["minYear"] || course["openingDate.getFullYear()"] > this.#courseData["maxYear"]){
-            message += `Date should be from 2000 to 2022 <br>`;
+        if(course["openingDate.getFullYear()"] < this.#courseData["minYear"] || course["openingDate.getFullYear()"] > this.#courseData["maxYear"]){
+        message += `Date should be from 2000 to 2022 <br>`;
         }
         
         return message;
     }
     getAllCourses(){
         return this.#courses.get();
+    }
+    sortCourses(key){
+        return _.sortBy(this.getAllCourses(), key);
+        
+    }
+    #getStatistics(interval, field){
+        const courses = this.getAllCourses();
+        const objStat = _.countBy(courses, e => {
+            return Math.floor(e[field/interval]);
+        });
+        return Object.keys(objStat).map(s => {
+            return {minInterval: s * interval + interval -1,
+            amount: objStat[s]}
+        });
+    }
+    getHoursStatistics(lengthInterval){
+        return  this.#getStatistics(lengthInterval, 'hours');
+        
+    }
+    getCostStatistic(lengthInterval){
+        return this.#getStatistics(lengthInterval, 'cost');
+    }
+    removeCourse(id){
+        if(!this.#courses.exists(id)){
+            throw `course with id ${id} not found`
+        }
+        return this.#courses.remove(id);
     }
 }

@@ -36,4 +36,10 @@ export default class Courses{
     get(){
         return this.#coursesList;
     }
+    remove(id){
+        const index = this.#coursesList.findIndex(c => c.id === id);
+        const res = this.#coursesList[index];
+        this.#coursesList.splice(index, 1);
+        return res;
+    }
 }
