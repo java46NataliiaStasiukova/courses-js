@@ -1,7 +1,15 @@
 //fake Data provisioning module
 
+import { reject } from "lodash";
 import { getRandomNumber } from "../utils/random";
 
+function getPromise(timeout, value){
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve(value);
+        }, timeout)
+    })
+}
 //data are the regular JS array (fake)
 export default class Courses{
     #coursesList;
@@ -15,7 +23,7 @@ export default class Courses{
     add(course){
         course.id = this.#getId();
         this.#coursesList.push(course);
-        return course;
+        return getPromise(1000, course);
     }
     #getId(){
         //return unique value of id
@@ -34,12 +42,12 @@ export default class Courses{
         return !!this.#coursesList.find(c => c.id === id);
     }
     get(){
-        return this.#coursesList;
+        return getPromise(2000, this.#coursesList);
     }
     remove(id){
         const index = this.#coursesList.findIndex(c => c.id === id);
         const res = this.#coursesList[index];
         this.#coursesList.splice(index, 1);
-        return res;
+        return getPromise(1000, res);
     }
 }
